@@ -9,13 +9,13 @@
     }
 
     $errors = [];
-    $task = [];
+    $project = [];
 
     $projects = is_auth_user() ? get_user_projects($connection, get_auth_user_property('id')) : [];
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        $task = array_map(function ($item) {
+        $project = array_map(function ($item) {
             return trim(strip_tags($item));
         }, $_POST);
         /**
@@ -26,12 +26,12 @@
             'name' => ['description' => 'Наименование', 'required' => true]
         ];
 
-        $errors = get_validation_result($fields, $task, $_FILES);
+        $errors = get_validation_result($fields, $project, $_FILES);
         $status_ok = empty(get_form_validation_classname($errors)) && is_auth_user();
 
         if ($status_ok) {
 
-            $add_status = add_project($connection, get_auth_user_property('id'), get_pure_data($task, 'name'), $errors);
+            $add_status = add_project($connection, get_auth_user_property('id'), get_pure_data($project, 'name'), $errors);
 
             if ($add_status) {
                 header('Location:/index.php');
@@ -59,7 +59,7 @@
             'user_content' => $user_content,
             'projects_content' => $projects_content,
             'errors' => $errors,
-            'project' => $task
+            'project' => $project
         ]);
 
     $layout_content = include_template('layout.php',

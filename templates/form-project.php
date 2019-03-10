@@ -32,7 +32,7 @@
                         <label class="form__label" for="project_name">Название <sup>*</sup></label>
 
                         <input class="form__input <?= get_field_validation_classname($errors, 'name') ?>" type="text"
-                               name="name" id="project_name" value="<?= get_pure_data($task, 'name'); ?>"
+                               name="name" id="project_name" value="<?= get_pure_data($project, 'name'); ?>"
                                placeholder="Введите название проекта">
                         <p class="form__message"><?= get_field_validation_message($errors, 'name') ?></p>
                     </div>
