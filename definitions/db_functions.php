@@ -163,6 +163,15 @@
         return $result;
     }
 
+    /**
+     * Функция возвращает true или false в зависимости от результата добавления проекта. В случае наличия ошибок, добавбляет описание
+     * ошибки в соответствующий массив
+     * @param $connection
+     * @param $current_user
+     * @param $name
+     * @param $errors
+     * @return bool
+     */
     function add_project ($connection, $current_user, $name, &$errors) {
 
         $user_status = get_id_existance($connection, 'users', $current_user);
@@ -203,4 +212,34 @@
     function get_project_status ($connection, $user_id, $name) {
         $sql = 'SELECT id FROM projects WHERE user_id= ' . $user_id . ' AND name="' . mysqli_real_escape_string($connection, $name) . '" LIMIT 1;';
         return get_data_from_db($connection, $sql, 'Невозможно получить id проекта по названию', true);
+    }
+
+    /**
+     * Функция принимает соединение и массив с данными формы. Возвращает либо массив с id добавленной записи задачи, либо массив с ошибкой
+     * В случае попытки использовать несуществующие id пользователя или id проекта возвращает ошибку
+     * @param $connection
+     * @param $task
+     * @param int $current_user
+     * @return array
+     */
+    function add_task ($connection, $task, $current_user = 1) {
+        $current_project = get_assoc_element($task, 'project');
+        $user_status = get_id_existance($connection, 'users', $current_user);
+        $project_status = get_id_existance($connection, 'projects', $current_project);
+
+        if (was_error($project_status) || was_error($user_status)) {
+            return ['error' => 'Попытка использовать несуществующие данные для добавления задачи. Задача не будет добавлена!'];
+        }
+
+        $sql = 'INSERT INTO tasks (project_id, user_id,  name, file, expiration_date) 
+                          VALUES ( ?, ?, ?, ?, ?)';
+        $stmt = db_get_prepare_stmt($connection, $sql, [
+            $current_project,
+            $current_user,
+            get_assoc_element($task, 'name'),
+            get_assoc_element($task, 'preview'),
+            date('Y-m-d H:i:s', strtotime(get_assoc_element($task, 'date')))
+        ]);
+        $res = mysqli_stmt_execute($stmt);
+        return  ($res) ? ['id' => mysqli_insert_id($connection)] : ['error' => mysqli_error($connection)];
     }

@@ -10,12 +10,14 @@
 
     $errors = [];
     $task = [];
+    $status_text = '';
 
     $projects = is_auth_user() ? get_user_projects($connection, get_auth_user_property('id')) : [];
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['date'])) {
-            $_POST['date'] = empty(trim($_POST['date'])) ? '' : '' . date('d.m.Y', strtotime(strip_tags($_POST['date'])));
+            $_POST['date'] = empty(trim($_POST['date'])) ? '' : '' .
+                date('d.m.Y H:i:s', strtotime(strip_tags($_POST['date']) . ' ' . date('H:i:s')));
         }
         $task = array_map(function ($item) {
             return trim(strip_tags($item));
@@ -30,12 +32,16 @@
             'date' => ['description' => 'Дата выполнения', 'required' => true, 'validation_rules' => ['project_date_validation']],
             'preview' => ['description' => 'Файл', 'required' => true, 'validation_rules' => [FILE_RULE]]
         ];
+
         $errors = get_validation_result($fields, $task, $_FILES);
         $status_ok = empty(get_form_validation_classname($errors)) && is_auth_user();
         $file_fields = get_file_fields($fields);
+
         if ($status_ok) {
             try_upload_files($file_fields, $_FILES, $errors, get_assoc_element(PATHS, 'files'), 'file', $task);
-            $add_result = false ;//add_lot($connection, $lot, get_auth_user_property('id'));
+
+            $add_result = add_task($connection, $task, get_auth_user_property('id'));
+            $status_text = (isset($add_result) && array_key_exists(ERROR_KEY, $add_result)) ? get_assoc_element($add_result, ERROR_KEY) : '';
             if (isset($add_result) && array_key_exists('id', $add_result)) {
                 header('Location: index.php');
             }
@@ -44,7 +50,7 @@
          * Если были ошибки, изображения нужно загрузить снова в любом случае
          */
         $_FILES = [];
-        foreach ($file_fields as $key_file_field => $image_field) {
+        foreach ($file_fields as $key_file_field => $file_field) {
             $description = get_assoc_element($fields, $key_file_field);
             set_assoc_element($description, 'errors', []);
         }
@@ -78,7 +84,8 @@
             'projects_content' => $projects_content,
             'projects_dropdown' => $projects_dropdown,
             'errors' => $errors,
-            'task' => $task
+            'task' => $task,
+            'status' => $status_text
         ]);
 
     $layout_content = include_template('layout.php',

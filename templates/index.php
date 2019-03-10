@@ -63,7 +63,9 @@
                                 </td>
 
                                 <td class="task__file">
-                                    <a class="download-link" href="#"> <?= get_pure_data($task, 'file'); ?></a>
+                                    <a class="download-link" href="<?= $path . get_pure_data($task, 'file'); ?>">
+                                        <?= get_pure_data($task, 'file'); ?>
+                                    </a>
                                 </td>
 
                                 <td class="task__date"> <?= get_pure_data($task, 'expiration_date'); ?></td>

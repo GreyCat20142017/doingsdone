@@ -34,7 +34,8 @@
             'projects_content' => $projects_content,
             'show_completed' => $show_completed_tasks,
             'tasks' => $tasks,
-            'projects' => $projects
+            'projects' => $projects,
+            'path' => get_assoc_element(PATHS, 'files')
         ]);
 
 //    $search_content = include_template('search.php', ['search_string' => $search_string]);

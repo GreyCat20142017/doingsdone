@@ -93,29 +93,18 @@
     }
 
     /**
-     * Функция возвращает результат проверки, является ли поле числом больше 0
-     * @param $number
-     * @return string
-     */
-    function get_decimal_validation_result ($number) {
-        $is_ok = is_numeric($number) && ($number > 0);
-        return $is_ok ? '' : 'Поле должно быть числом больше 0';
-    }
-
-    /**
      * Функция проверяет, явяется ли параметр датой в формате ДД.ММ.ГГГГ больше текущей минимум на 1 день
      * @param $date
      * @return string
      */
     function get_task_date_validation_result ($date) {
-        $error_message = 'Необходима дата в формате ДД.ММ.ГГГГ больше текущей минимум на 1 день';
+        $error_message = 'Необходима дата в формате ДД.ММ.ГГГГ больше или равна текущей ';
         $now = date_create("now");
         $new_date = date_create_from_format('d.m.Y', $date);
         if (!$new_date || $date !== date_format($new_date, 'd.m.Y')) {
             $status = $error_message;
         } else {
-            $days_count = date_interval_format(date_diff($new_date, $now), "%d");
-            $status = ($new_date > $now) && ($days_count >= 1) ? '' : $error_message;
+            $status = ($new_date >= $now) ? '' : $error_message;
         }
         return $status;
     }
@@ -134,8 +123,6 @@
                 return !filter_var($current_field, FILTER_VALIDATE_EMAIL) ? 'Email должен быть корректным' : '';
             case 'lot_date_validation':
                 return get_task_date_validation_result($current_field);
-            case 'decimal_validation':
-                return get_decimal_validation_result($current_field);
             case 'auth_validation':
                 return is_auth_user() ? '' : 'Необходимо авторизоваться';
 
@@ -154,7 +141,7 @@
     function get_file_validation_result ($field_name, &$files, $is_required) {
         if (isset($files[$field_name]['name'])) {
             if (get_assoc_element($files[$field_name], 'error') !== 0) {
-                return 'Изображение не загружено';
+                return 'Файл не загружен';
             }
             $tmp_name = $files[$field_name]['tmp_name'];
             $file_size = $files[$field_name]['size'];
@@ -193,7 +180,7 @@
         foreach ($file_fields as $field_name => $field) {
             $tmp_name = $files[$field_name]['tmp_name'];
             if (!empty($tmp_name) && is_uploaded_file($tmp_name)) {
-                $path = uniqid($file_key . '-', true) . '.' . pathinfo($files[$field_name]['name'], PATHINFO_EXTENSION);
+                $path = uniqid('', true) . '.' . pathinfo($files[$field_name]['name'], PATHINFO_EXTENSION);
                 if (check_and_repair_path($file_path)) {
                     move_uploaded_file($tmp_name, $file_path . $path);
                     $data[$field_name] = $path;
