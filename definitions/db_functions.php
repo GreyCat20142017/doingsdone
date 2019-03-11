@@ -79,9 +79,14 @@
      * @param $show_completed
      * @return array|null
      */
-    function get_user_tasks ($connection, $user_id, $show_completed) {
+    function get_user_tasks ($connection, $user_id, $show_completed, $search_string, $filter_string = 'none') {
+        $show_condition = $show_completed ? '' : ' AND status=0 ';
+        $filter_condition = get_assoc_element(FILTER_CONDITION, $filter_string);
+        $filter_condition = empty($filter_condition) ? '' : ' AND ' . $filter_condition;
+        $search_condition = empty($search_string) ? '' : ' AND  MATCH(name) AGAINST("' . $search_string . '" IN BOOLEAN MODE)';
         $sql = 'SELECT id, name , file, expiration_date, status, 
-                      GREATEST(0, TIMESTAMPDIFF(SECOND, NOW(), expiration_date))  AS time_left FROM tasks WHERE user_id = ' . $user_id . ';';
+                      GREATEST(0, TIMESTAMPDIFF(SECOND, NOW(), expiration_date))  AS time_left FROM tasks 
+                      WHERE user_id = ' . $user_id . $show_condition . $search_condition . $filter_condition .  ';';
         $data = get_data_from_db($connection, $sql, 'Невозможно получить данные о задачах');
         return (!$data || was_error($data)) ? [] : $data;
     }
@@ -241,5 +246,10 @@
             date('Y-m-d H:i:s', strtotime(get_assoc_element($task, 'date')))
         ]);
         $res = mysqli_stmt_execute($stmt);
-        return  ($res) ? ['id' => mysqli_insert_id($connection)] : ['error' => mysqli_error($connection)];
+        return ($res) ? ['id' => mysqli_insert_id($connection)] : ['error' => mysqli_error($connection)];
+    }
+
+    function update_task_status_by_id ($connection, $task_id) {
+        $sql = 'UPDATE tasks SET status = (CASE WHEN status = 1 THEN 0 ELSE 1 END) WHERE id=' . $task_id . ';';
+        return mysqli_query($connection, $sql);
     }

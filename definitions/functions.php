@@ -207,3 +207,7 @@
         $result .= ($seconds_left <= 24*3600) ? ' ' . 'task--important' : '';
         return $result;
     }
+
+    function get_current_tab_classname ($current, $tab) {
+        return $current === $tab ? ' tasks-switch__item--active ' : '';
+    }

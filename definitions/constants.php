@@ -26,3 +26,22 @@
     define('DDONE_SESSION', 'current_user');
 
     define('TEST_EMAIL', 'nrz3siaatg81@mail.ru');
+
+    define('FILTER_ALL', 'all');
+    define('FILTER_TODAY', 'today');
+    define('FILTER_TOMORROW', 'tomorrow');
+    define('FILTER_EXPIRED', 'expired');
+
+    define('FILTER_CONDITION', [
+        FILTER_ALL => '',
+        FILTER_TODAY => ' expiration_date >= TIMESTAMPADD(DAY, 0, DATE (NOW())) AND expiration_date < TIMESTAMPADD(DAY, 1, DATE(NOW())) ',
+        FILTER_TOMORROW => ' expiration_date >= TIMESTAMPADD(DAY, 1, DATE (NOW())) AND expiration_date < TIMESTAMPADD(DAY, 2, DATE(NOW())) ',
+        FILTER_EXPIRED => ' completion_date IS NULL AND expiration_date <= NOW() '
+    ]);
+
+    define('FILTER_TEXT', [
+        FILTER_ALL => 'Все задачи',
+        FILTER_TODAY => 'Повестка дня',
+        FILTER_TOMORROW => 'Завтра',
+        FILTER_EXPIRED => 'Просроченные'
+    ]);
