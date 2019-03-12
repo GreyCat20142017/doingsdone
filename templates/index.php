@@ -33,7 +33,7 @@
                 <div class="tasks-controls">
                     <nav class="tasks-switch">
                         <?php foreach ($condition_descriptions as $condition_key => $condition_text): ?>
-                            <a href="index.php?condition=<?= $condition_key; ?>"
+                            <a href="<?= get_href_by_current_filters($condition_key, $show_completed, $current_project); ?>"
                                class="tasks-switch__item <?= get_current_tab_classname($current_filter, $condition_key); ?>">
                                 <?= $condition_text; ?>
                             </a>
@@ -43,7 +43,7 @@
                     <label class="checkbox">
                         <input
                             class="checkbox__input visually-hidden show_completed" <?= get_checked_attribute($show_completed); ?>
-                        " type="checkbox">
+                         type="checkbox">
                         <span class="checkbox__text">Показывать выполненные</span>
                     </label>
                 </div>

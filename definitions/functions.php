@@ -25,7 +25,6 @@
         return ob_get_clean();
     }
 
-
     /**
      * Функция проверяет существование ключа ассоциативного массива и возвращает значение по ключу, если
      * существуют ключ и значение. В противном случае будет возвращена пустая строка или пустой массив (если передан
@@ -193,7 +192,7 @@
      * @return string
      */
     function get_checked_attribute ($value) {
-        return ($value)  ? ' checked ' : '';
+        return ($value) ? ' checked ' : '';
     }
 
     /**
@@ -201,13 +200,29 @@
      * @param $status
      * @return string
      */
-    function get_task_classname($status, $seconds_left) {
-        $seconds_left = empty($seconds_left) ? 0  : $seconds_left;
+    function get_task_classname ($status, $seconds_left) {
+        $seconds_left = empty($seconds_left) ? 0 : $seconds_left;
         $result = ($status) ? 'task--completed' : '';
-        $result .= ($seconds_left <= 24*3600) ? ' ' . 'task--important' : '';
+        $result .= ($seconds_left <= 24 * 3600) ? ' ' . 'task--important' : '';
         return $result;
     }
 
+    /**
+     * Функция возвращает имя активного класса при совпадении индексов вкладок
+     * @param $current
+     * @param $tab
+     * @return string
+     */
     function get_current_tab_classname ($current, $tab) {
         return $current === $tab ? ' tasks-switch__item--active ' : '';
+    }
+
+    /**
+     * Функция возвращает ссылку в зависимости от установленных фильтров и текущего проекта
+     * @param $current_filter
+     * @param null $project_id
+     * @return string
+     */
+    function get_href_by_current_filters ($current_filter,  $show_completed, $project_id = null) {
+        return 'index.php?condition=' . $current_filter . '&show_completed=' . $show_completed .  ($project_id ? '&project_id=' . $project_id : '');
     }

@@ -79,14 +79,15 @@
      * @param $show_completed
      * @return array|null
      */
-    function get_user_tasks ($connection, $user_id, $show_completed, $search_string, $filter_string = 'none') {
-        $show_condition = $show_completed ? '' : ' AND status=0 ';
+    function get_user_tasks ($connection, $user_id, $show_completed, $project_id,  $search_string, $filter_string = 'none') {
+        $show_condition = $show_completed ? '' : ' AND status = 0 ';
+        $project_condition = $project_id ?  ' AND project_id = ' . $project_id . ' ' : '';
         $filter_condition = get_assoc_element(FILTER_CONDITION, $filter_string);
         $filter_condition = empty($filter_condition) ? '' : ' AND ' . $filter_condition;
         $search_condition = empty($search_string) ? '' : ' AND  MATCH(name) AGAINST("' . $search_string . '" IN BOOLEAN MODE)';
         $sql = 'SELECT id, name , file, expiration_date, status, 
                       GREATEST(0, TIMESTAMPDIFF(SECOND, NOW(), expiration_date))  AS time_left FROM tasks 
-                      WHERE user_id = ' . $user_id . $show_condition . $search_condition . $filter_condition .  ';';
+                      WHERE user_id = ' . $user_id . $show_condition . $project_condition .  $search_condition . $filter_condition .  ';';
         $data = get_data_from_db($connection, $sql, 'Невозможно получить данные о задачах');
         return (!$data || was_error($data)) ? [] : $data;
     }
