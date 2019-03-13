@@ -65,9 +65,9 @@
                     FROM projects AS p
                            LEFT OUTER JOIN (SELECT COUNT(*) AS tasks_amount, t.project_id
                                             FROM tasks AS t
-                                            WHERE t.user_id = ' . $user_id . '
+                                            WHERE t.user_id = ' . mysqli_real_escape_string($connection, $user_id) . '
                                             GROUP BY t.project_id) AS tt ON p.id = tt.project_id
-                    WHERE user_id =' . $user_id . ';';
+                    WHERE user_id =' . mysqli_real_escape_string($connection, $user_id) . ';';
         $data = get_data_from_db($connection, $sql, 'Невозможно получить данные о проектах');
         return (!$data || was_error($data)) ? [] : $data;
     }
@@ -79,15 +79,15 @@
      * @param $show_completed
      * @return array|null
      */
-    function get_user_tasks ($connection, $user_id, $show_completed, $project_id,  $search_string, $filter_string = 'none') {
+    function get_user_tasks ($connection, $user_id, $show_completed, $project_id, $search_string, $filter_string = 'none') {
         $show_condition = $show_completed ? '' : ' AND status = 0 ';
-        $project_condition = $project_id ?  ' AND project_id = ' . $project_id . ' ' : '';
-        $filter_condition = get_assoc_element(FILTER_CONDITION, $filter_string);
+        $project_condition = $project_id ? ' AND project_id = ' . mysqli_real_escape_string($connection, $project_id) . ' ' : '';
+        $filter_condition = get_assoc_element(FILTER_CONDITION, mysqli_real_escape_string($connection, $filter_string));
         $filter_condition = empty($filter_condition) ? '' : ' AND ' . $filter_condition;
         $search_condition = empty($search_string) ? '' : ' AND  MATCH(name) AGAINST("' . $search_string . '" IN BOOLEAN MODE)';
         $sql = 'SELECT id, name , file, expiration_date, status, 
                       GREATEST(0, TIMESTAMPDIFF(SECOND, NOW(), expiration_date))  AS time_left FROM tasks 
-                      WHERE user_id = ' . $user_id . $show_condition . $project_condition .  $search_condition . $filter_condition .  ';';
+                      WHERE user_id = ' . mysqli_real_escape_string($connection, $user_id) . $show_condition . $project_condition . $search_condition . $filter_condition . ';';
         $data = get_data_from_db($connection, $sql, 'Невозможно получить данные о задачах');
         return (!$data || was_error($data)) ? [] : $data;
     }
@@ -101,7 +101,7 @@
      */
     function get_id_existance ($connection, $table, $id) {
         $data = [[ERROR_KEY => 'Id =  ' . $id . ' в таблице ' . $table . ' не существует! ']];
-        $sql = 'SELECT id FROM ' . $table . ' WHERE id = ' . $id . ' LIMIT 1;';
+        $sql = 'SELECT id FROM ' . $table . ' WHERE id = ' . mysqli_real_escape_string($connection, $id) . ' LIMIT 1;';
         $result = get_data_from_db($connection, $sql, 'Невозможно получить id из таблицы ' . $table, true);
         if ($result) {
             $data = $result;
@@ -117,7 +117,7 @@
      * @return null || array
      */
     function get_id_by_email ($connection, $email) {
-        $sql = 'SELECT id FROM users WHERE email="' . mysqli_real_escape_string($connection, $email) . '" LIMIT 1;';
+        $sql = 'SELECT id FROM users WHERE email = "' . mysqli_real_escape_string($connection, $email) . '" LIMIT 1;';
         return get_data_from_db($connection, $sql, 'Невозможно получить id пользователя', true);
     }
 
@@ -216,7 +216,8 @@
      * @return null || array
      */
     function get_project_status ($connection, $user_id, $name) {
-        $sql = 'SELECT id FROM projects WHERE user_id= ' . $user_id . ' AND name="' . mysqli_real_escape_string($connection, $name) . '" LIMIT 1;';
+        $sql = 'SELECT id FROM projects WHERE user_id = ' . mysqli_real_escape_string($connection, $user_id) .
+            ' AND name="' . mysqli_real_escape_string($connection, $name) . '" LIMIT 1;';
         return get_data_from_db($connection, $sql, 'Невозможно получить id проекта по названию', true);
     }
 
@@ -250,7 +251,43 @@
         return ($res) ? ['id' => mysqli_insert_id($connection)] : ['error' => mysqli_error($connection)];
     }
 
+    /**
+     * Функция инвертирует статус задачи
+     * @param $connection
+     * @param $task_id
+     * @return bool|mysqli_result
+     */
     function update_task_status_by_id ($connection, $task_id) {
-        $sql = 'UPDATE tasks SET status = (CASE WHEN status = 1 THEN 0 ELSE 1 END) WHERE id=' . $task_id . ';';
+        $sql = 'UPDATE tasks SET status = (CASE WHEN status = 1 THEN 0 ELSE 1 END) WHERE id = ' . mysqli_real_escape_string($connection, $task_id) . ';';
         return mysqli_query($connection, $sql);
+    }
+
+    /**
+     * Функция проверяет существование ключа в указанной таблице БД
+     * @param $connection
+     * @param $user_id
+     * @param $id
+     * @return bool
+     */
+    function get_project_existance ($connection, $user_id, $id) {
+        $sql = 'SELECT id FROM projects  WHERE id = ' . mysqli_real_escape_string($connection, $id) .
+            ' AND user_id = ' . mysqli_real_escape_string($connection, $user_id) . ' LIMIT 1;';
+        $result = get_data_from_db($connection, $sql, 'Невозможно получить id проекта для пользователя', true);
+        return $result ? true : false;
+    }
+
+    /**
+     * Функция возвращает список задач с данными пользователей для отправки оповещений либо пустой массив
+     * @param $connection
+     * return array
+     */
+    function get_notify_list ($connection) {
+        $sql = 'SELECT t.id, t.name, t.expiration_date, u.name AS username, u.email
+                FROM tasks AS t
+                       JOIN users AS u ON t.user_id = u.id
+                WHERE status = 0
+                        AND t.expiration_date > NOW()
+                        AND t.expiration_date <= TIMESTAMPADD(HOUR, 1, NOW())';
+        $data = get_data_from_db($connection, $sql, 'Невозможно получить данные для выявления победителей');
+        return (!$data || was_error($data)) ? [] : $data;
     }

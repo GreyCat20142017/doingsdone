@@ -2,7 +2,8 @@
     <?php foreach ($projects as $project): ?>
         <li class="main-navigation__list-item">
             <a class="main-navigation__list-item-link"
-               href="<?= get_href_by_current_filters($current_filter, $show_completed, get_pure_data($project, 'id')); ?>">
+               href="<?= get_href_by_current_filters($current_filter, $show_completed, get_pure_data($project, 'id')); ?>"
+                <?= get_active_project_style($current_project, get_pure_data($project, 'id')); ?>>
                 <?= get_pure_data($project, 'name'); ?>
             </a>
             <span

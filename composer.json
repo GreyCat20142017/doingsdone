@@ -1,0 +1,7 @@
+{
+    "name": "gc/doingsdone",
+    "description": "doingsdone",
+    "require": {
+        "swiftmailer/swiftmailer": "^6.2"
+    }
+}

@@ -3,24 +3,36 @@
     session_start();
     require_once('init.php');
 
+    $is_ok = true;
     $logo_content = include_template('logo.php', []);
 
     if (is_auth_user()) {
 
-        $filter_string = FILTER_ALL;
-
-        $show_completed_tasks = isset($_GET['show_completed']) ? intval(trim(strip_tags($_GET['show_completed']))) : 1;
+        $filter_string = get_auth_user_property('current_filter', DEFAULT_FILTER);
+        $show_completed_tasks = get_auth_user_property('current_show_completed', DEFAULT_SHOW_COMPLETED);
+        $project_id = get_auth_user_property('current_project', DEFAULT_PROJECT);
+        $search_string = '';
 
         if (isset($_GET['task_id']) && isset($_GET['check'])) {
             update_task_status_by_id($connection, intval(trim(strip_tags($_GET['task_id']))));
             header('Location: index.php');
         }
 
-        $projects = is_auth_user() ? get_user_projects($connection, get_auth_user_property('id')) : [];
-        $project_id = isset($_GET['project_id']) ? intval(strip_tags($_GET['project_id'])) : null;
-        $project_existance = get_id_existance($connection, 'projects', $project_id);
-        $is_ok = ($project_id) && was_error($project_existance) ? false : true;
-        $search_string = '';
+        if (isset($_GET['project_id'])) {
+            $project_id = intval(strip_tags($_GET['project_id']));
+        }
+
+        if (isset($_GET['condition'])) {
+            $filter_string = trim(strip_tags($_GET['condition']));
+        }
+
+        if (isset($_GET['show_completed'])) {
+            $show_completed_tasks = intval(trim(strip_tags($_GET['show_completed'])));
+        }
+
+        $is_ok = ($project_id) ? get_project_existance($connection, intval(get_auth_user_property('id')), $project_id) : true;
+
+        $projects = $is_ok ? get_user_projects($connection, get_auth_user_property('id')) : [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['find'])) {
 
@@ -30,7 +42,6 @@
 
         } else {
 
-            $filter_string = isset($_GET['condition']) ? trim(strip_tags($_GET['condition'])) : '';
             $tasks = is_auth_user() ?
                 get_user_tasks($connection, get_auth_user_property('id'), $show_completed_tasks, $project_id, '', $filter_string) : [];
 
@@ -46,8 +57,8 @@
             [
                 'projects' => $projects,
                 'show_completed' => $show_completed_tasks,
-                'current_filter' => $filter_string
-
+                'current_filter' => $filter_string,
+                'current_project' => $project_id
             ]);
 
         $search_content = include_template('search.php', ['search_string' => $search_string]);
@@ -67,18 +78,26 @@
                 'path' => get_assoc_element(PATHS, 'files')
             ]);
 
+        if (!$is_ok) {
+
+            http_response_code(404);
+            $page_content = include_template('404.php', [
+                'logo_content' => $logo_content,
+                'error_message' => 'Ошибка 404. Проект с id= ' . $project_id . ' текущего пользователя не найден!'
+            ]);
+
+        } else {
+
+            $_SESSION[DDONE_SESSION]['current_project'] = $project_id;
+            $_SESSION[DDONE_SESSION]['current_filter'] = $filter_string;
+            $_SESSION[DDONE_SESSION]['current_show_completed'] = $show_completed_tasks;
+
+        }
+
     } else {
 
         $page_content = include_template('guest.php', [
             'logo_content' => $logo_content,
-        ]);
-    }
-
-    if (!$is_ok) {
-        http_response_code(404);
-        $page_content = include_template('404.php', [
-            'logo_content' => $logo_content,
-            'error_message' =>  '404. Проект с id= ' . $project_id . ' не найден!'
         ]);
     }
 
@@ -89,8 +108,6 @@
             'is_auth' => is_auth_user(),
             'user_name' => get_auth_user_property('name')
         ]);
-
-
 
     print($layout_content);
 

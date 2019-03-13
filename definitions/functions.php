@@ -226,3 +226,13 @@
     function get_href_by_current_filters ($current_filter,  $show_completed, $project_id = null) {
         return 'index.php?condition=' . $current_filter . '&show_completed=' . $show_completed .  ($project_id ? '&project_id=' . $project_id : '');
     }
+
+    /**
+     * Функция возвращает инлайновый стиль для активного проекта, если он определен. Иначе - пустую строку.
+     * @param $current_project
+     * @param $project_id
+     * @return string
+     */
+    function get_active_project_style ($current_project, $project_id) {
+        return (intval($current_project) === intval($project_id)) ? ' style = "color: #6e45e2;" ' : '';
+    }

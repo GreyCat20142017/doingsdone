@@ -62,7 +62,10 @@
 
                 $_SESSION[DDONE_SESSION] = [
                     'id' => get_assoc_element($db_user, 'id'),
-                    'name' => get_assoc_element($db_user, 'name')
+                    'name' => get_assoc_element($db_user, 'name'),
+                    'current_project' => DEFAULT_PROJECT,
+                    'current_filter' => DEFAULT_FILTER,
+                    'current_show_completed' => DEFAULT_SHOW_COMPLETED
                 ];;
 
                 header('Location: index.php');

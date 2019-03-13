@@ -30,11 +30,9 @@ CREATE TABLE tasks (
   expiration_date TIMESTAMP        NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-# CREATE INDEX winner_completion ON lots (winner_id, completion_date);
+CREATE INDEX status_expiration ON tasks (status, expiration_date);
 
 CREATE FULLTEXT INDEX tasks_ft_search ON tasks (name);
-
-# CREATE UNIQUE INDEX  user_lot ON bids (user_id, lot_id);
 
 
 ALTER TABLE tasks

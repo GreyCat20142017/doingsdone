@@ -12,8 +12,8 @@
      * @param $property_name
      * @return string
      */
-    function get_auth_user_property ($property_name) {
-        $current = '';
+    function get_auth_user_property ($property_name, $specific_value = '') {
+        $current = $specific_value;
         if (isset($_SESSION[DDONE_SESSION])) {
             $current = strip_tags(get_assoc_element($_SESSION[DDONE_SESSION], $property_name));
         }

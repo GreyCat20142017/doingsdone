@@ -23,6 +23,7 @@
 
                 <a class="button button--transparent button--plus content__side-button"
                    href="form-project.php" target="project_add">Добавить проект</a>
+                <a class="button content__side-button" href="notify.php" style="margin-top: 20px;">Оповещения</a>
             </section>
 
             <main class="content__main">

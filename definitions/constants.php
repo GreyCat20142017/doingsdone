@@ -45,3 +45,8 @@
         FILTER_TOMORROW => 'Завтра',
         FILTER_EXPIRED => 'Просроченные'
     ]);
+
+    define('DEFAULT_FILTER', FILTER_ALL);
+    define('DEFAULT_PROJECT', null);
+    define('DEFAULT_SHOW_COMPLETED', 1);
+
