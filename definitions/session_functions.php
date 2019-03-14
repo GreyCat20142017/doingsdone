@@ -10,6 +10,7 @@
     /**
      * Возвращает параметр сессии (имя пользователя, id и т.д.) если есть залогиненный пользователь
      * @param $property_name
+     * @param string $specific_value
      * @return string
      */
     function get_auth_user_property ($property_name, $specific_value = '') {
@@ -21,7 +22,7 @@
     }
 
     /**
-     * Logout 
+     * Logout
      *
      */
     function logout_current_user () {

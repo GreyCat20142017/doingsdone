@@ -153,9 +153,9 @@
     /**
      * Функция возвращает текст href для кнопки пагинации "Вперед"
      * @param $pagination_context
-     * @param $id
      * @param $active
      * @param $last
+     * @param $pre_page_string
      * @return string
      */
     function get_next_href ($pagination_context, $active, $last, $pre_page_string) {
@@ -188,7 +188,7 @@
     }
 
     /** Функция возвращает атрибут в зависимости от передаваемого параметра
-     * @param $show_completed
+     * @param $value
      * @return string
      */
     function get_checked_attribute ($value) {
@@ -198,6 +198,7 @@
     /**
      * Функция возвращает имя класса для задачи в зависимости от ее статуса и времени, оставшегося до завершения
      * @param $status
+     * @param $seconds_left
      * @return string
      */
     function get_task_classname ($status, $seconds_left) {
@@ -220,11 +221,12 @@
     /**
      * Функция возвращает ссылку в зависимости от установленных фильтров и текущего проекта
      * @param $current_filter
+     * @param $show_completed
      * @param null $project_id
      * @return string
      */
-    function get_href_by_current_filters ($current_filter,  $show_completed, $project_id = null) {
-        return 'index.php?condition=' . $current_filter . '&show_completed=' . $show_completed .  ($project_id ? '&project_id=' . $project_id : '');
+    function get_href_by_current_filters ($current_filter, $show_completed, $project_id = null) {
+        return 'index.php?condition=' . $current_filter . '&show_completed=' . $show_completed . ($project_id ? '&project_id=' . $project_id : '');
     }
 
     /**

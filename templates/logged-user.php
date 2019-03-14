@@ -1,6 +1,6 @@
 <?php if ($is_auth): ?>
     <div class="user-menu__image">
-        <img src="../img/user.png" width="40" height="40" alt="Пользователь">
+        <img src="img/user.png" width="40" height="40" alt="Пользователь">
     </div>
 
     <div class="user-menu__data">

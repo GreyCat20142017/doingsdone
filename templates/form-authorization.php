@@ -35,14 +35,15 @@
                         <label class="form__label" for="password">Пароль <sup>*</sup></label>
 
                         <input class="form__input  <?= get_field_validation_classname($errors, 'password') ?>"
-                               type="password" name="password" id="password"  value="<?= get_pure_data($user, 'password'); ?>"
+                               type="password" name="password" id="password"
+                               value="<?= get_pure_data($user, 'password'); ?>"
                                placeholder="Введите пароль">
 
                         <p class="form__message"><?= get_field_validation_message($errors, 'password') ?></p>
                     </div>
 
                     <div class="form__row form__row--controls">
-                        <p class="error-message"><?= get_form_validation_message($errors) . $status ?></p>
+                        <p class="error-message"><?= get_form_validation_message($errors) . ' ' . $status ?></p>
                         <input class="button" type="submit" name="login" value="Войти">
                     </div>
 

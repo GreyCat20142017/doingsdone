@@ -85,7 +85,7 @@
 
     /**
      * Функция возвращает результат проверки правильности выбора значения из списка категорий
-     * @param $category_value
+     * @param $project_value
      * @return string
      */
     function get_project_validation_result ($project_value) {
@@ -173,10 +173,9 @@
      * @param $files
      * @param $errors
      * @param $file_path
-     * @param $file_key
      * @param $data
      */
-    function try_upload_files ($file_fields, &$files, &$errors, $file_path, $file_key, &$data) {
+    function try_upload_files ($file_fields, &$files, &$errors, $file_path, &$data) {
         foreach ($file_fields as $field_name => $field) {
             $tmp_name = $files[$field_name]['tmp_name'];
             if (!empty($tmp_name) && is_uploaded_file($tmp_name)) {

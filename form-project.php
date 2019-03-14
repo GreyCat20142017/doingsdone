@@ -8,6 +8,10 @@
         exit();
     }
 
+    $filter_string = get_auth_user_property('current_filter', DEFAULT_FILTER);
+    $show_completed_tasks = intval(get_auth_user_property('current_show_completed', DEFAULT_SHOW_COMPLETED));
+    $project_id = intval(get_auth_user_property('current_project', DEFAULT_PROJECT));
+
     $errors = [];
     $project = [];
 
@@ -50,7 +54,10 @@
 
     $projects_content = include_template('projects.php',
         [
-            'projects' => $projects
+            'projects' => $projects,
+            'show_completed' => $show_completed_tasks,
+            'current_filter' => $filter_string,
+            'current_project' => $project_id
         ]);
 
     $page_content = include_template('form-project.php',
@@ -67,4 +74,5 @@
             'page_content' => $page_content,
             'title' => 'Проекты'
         ]);
+
     print($layout_content);

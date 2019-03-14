@@ -9,8 +9,8 @@
     if (is_auth_user()) {
 
         $filter_string = get_auth_user_property('current_filter', DEFAULT_FILTER);
-        $show_completed_tasks = get_auth_user_property('current_show_completed', DEFAULT_SHOW_COMPLETED);
-        $project_id = get_auth_user_property('current_project', DEFAULT_PROJECT);
+        $show_completed_tasks = intval(get_auth_user_property('current_show_completed', DEFAULT_SHOW_COMPLETED));
+        $project_id = intval(get_auth_user_property('current_project', DEFAULT_PROJECT));
         $search_string = '';
 
         if (isset($_GET['task_id']) && isset($_GET['check'])) {
@@ -37,8 +37,16 @@
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['find'])) {
 
             $search_string = isset($_POST['search']) ? trim(strip_tags($_POST['search'])) : '';
-            $tasks = (is_auth_user() && !empty($search_string)) ?
-                get_user_tasks($connection, get_auth_user_property('id'), $show_completed_tasks, $project_id, $search_string) : [];
+
+            /**
+             * Если не сбрасывать значения текущих фильтра, проекта и т.д.
+             */
+            // $tasks = (is_auth_user() && !empty($search_string)) ? get_user_tasks($connection, get_auth_user_property('id'), $show_completed_tasks, $project_id, $search_string) : [];*/
+
+            $filter_string = DEFAULT_FILTER;
+            $show_completed_tasks = DEFAULT_SHOW_COMPLETED;
+            $project_id = DEFAULT_PROJECT;
+            $tasks = (is_auth_user() && !empty($search_string)) ? get_user_tasks($connection, get_auth_user_property('id'), $show_completed_tasks, $project_id, $search_string) : [];
 
         } else {
 
@@ -59,6 +67,7 @@
                 'show_completed' => $show_completed_tasks,
                 'current_filter' => $filter_string,
                 'current_project' => $project_id
+
             ]);
 
         $search_content = include_template('search.php', ['search_string' => $search_string]);

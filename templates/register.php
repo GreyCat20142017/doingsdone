@@ -21,7 +21,8 @@
                     <div class="form__row">
                         <label class="form__label" for="email">E-mail <sup>*</sup></label>
 
-                        <input class="form__input <?= get_field_validation_classname($errors, 'email') ?>" type="text" name="email" id="email"
+                        <input class="form__input <?= get_field_validation_classname($errors, 'email') ?>" type="text"
+                               name="email" id="email"
                                value="<?= get_pure_data($user, 'email'); ?>"
                                placeholder="Введите e-mail">
 
@@ -31,7 +32,8 @@
                     <div class="form__row">
                         <label class="form__label" for="name">Имя <sup>*</sup></label>
 
-                        <input class="form__input <?= get_field_validation_classname($errors, 'name') ?>" type="text" name="name" id="name"
+                        <input class="form__input <?= get_field_validation_classname($errors, 'name') ?>" type="text"
+                               name="name" id="name"
                                value="<?= get_pure_data($user, 'name'); ?>"
                                placeholder="Введите имя">
                         <p class="form__message"><?= get_field_validation_message($errors, 'name') ?></p>

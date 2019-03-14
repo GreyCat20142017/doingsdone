@@ -22,7 +22,7 @@
                 </nav>
 
                 <a class="button button--transparent button--plus content__side-button"
-                   href="form-project.php" target="project_add">Добавить проект</a>
+                   href="form-project.php">Добавить проект</a>
                 <a class="button content__side-button" href="notify.php" style="margin-top: 20px;">Оповещения</a>
             </section>
 
@@ -44,7 +44,7 @@
                     <label class="checkbox">
                         <input
                             class="checkbox__input visually-hidden show_completed" <?= get_checked_attribute($show_completed); ?>
-                         type="checkbox">
+                            type="checkbox">
                         <span class="checkbox__text">Показывать выполненные</span>
                     </label>
                 </div>

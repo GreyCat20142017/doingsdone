@@ -77,6 +77,9 @@
      * @param $connection
      * @param $user_id
      * @param $show_completed
+     * @param $project_id
+     * @param $search_string
+     * @param string $filter_string
      * @return array|null
      */
     function get_user_tasks ($connection, $user_id, $show_completed, $project_id, $search_string, $filter_string = 'none') {
@@ -212,7 +215,8 @@
      * Функция возращает ошибку, если невозможно получить данные из БД, массив с id проекта, если проект
      * с таким названием существует, null - если не было ошибки и такого пользователя нет в БД
      * @param $connection
-     * @param $email
+     * @param $user_id
+     * @param $name
      * @return null || array
      */
     function get_project_status ($connection, $user_id, $name) {
@@ -258,7 +262,9 @@
      * @return bool|mysqli_result
      */
     function update_task_status_by_id ($connection, $task_id) {
-        $sql = 'UPDATE tasks SET status = (CASE WHEN status = 1 THEN 0 ELSE 1 END) WHERE id = ' . mysqli_real_escape_string($connection, $task_id) . ';';
+        $sql = 'UPDATE tasks 
+                  SET status = (CASE WHEN status = 1 THEN 0 ELSE 1 END), completion_date = (CASE WHEN status = 1 THEN NOW() ELSE NULL END)
+                  WHERE id = ' . mysqli_real_escape_string($connection, $task_id) . ';';
         return mysqli_query($connection, $sql);
     }
 
@@ -280,6 +286,7 @@
      * Функция возвращает список задач с данными пользователей для отправки оповещений либо пустой массив
      * @param $connection
      * return array
+     * @return array|null
      */
     function get_notify_list ($connection) {
         $sql = 'SELECT t.id, t.name, t.expiration_date, u.name AS username, u.email

@@ -27,7 +27,6 @@
 
         $status_ok = empty(get_form_validation_classname($errors));
 
-
         if ($status_ok) {
 
             $add_result = add_user($connection, $user);
@@ -53,7 +52,6 @@
         'user' => $user,
         'status' => $status_text
     ]);
-
 
     $layout_content = include_template('layout.php',
         [

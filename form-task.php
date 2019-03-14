@@ -8,11 +8,16 @@
         exit();
     }
 
+    $filter_string = get_auth_user_property('current_filter', DEFAULT_FILTER);
+    $show_completed_tasks = intval(get_auth_user_property('current_show_completed', DEFAULT_SHOW_COMPLETED));
+    $project_id = intval(get_auth_user_property('current_project', DEFAULT_PROJECT));
+
     $errors = [];
     $task = [];
     $status_text = '';
 
     $projects = is_auth_user() ? get_user_projects($connection, get_auth_user_property('id')) : [];
+
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['date'])) {
@@ -38,7 +43,7 @@
         $file_fields = get_file_fields($fields);
 
         if ($status_ok) {
-            try_upload_files($file_fields, $_FILES, $errors, get_assoc_element(PATHS, 'files'), 'file', $task);
+            try_upload_files($file_fields, $_FILES, $errors, get_assoc_element(PATHS, 'files') , $task);
 
             $add_result = add_task($connection, $task, get_auth_user_property('id'));
             $status_text = (isset($add_result) && array_key_exists(ERROR_KEY, $add_result)) ? get_assoc_element($add_result, ERROR_KEY) : '';
@@ -66,7 +71,10 @@
 
     $projects_content = include_template('projects.php',
         [
-            'projects' => $projects
+            'projects' => $projects,
+            'show_completed' => $show_completed_tasks,
+            'current_filter' => $filter_string,
+            'current_project' => $project_id
         ]);
 
     $projects_dropdown = include_template('projects_dropdown.php',
@@ -93,4 +101,5 @@
             'page_content' => $page_content,
             'title' => 'Проекты'
         ]);
+
     print($layout_content);
