@@ -15,20 +15,14 @@
 
         if (isset($_GET['task_id']) && isset($_GET['check'])) {
             update_task_status_by_id($connection, intval(trim(strip_tags($_GET['task_id']))));
-            header('Location: index.php');
+            header('Location: ' . get_href_by_current_filters($filter_string, $show_completed_tasks, $project_id));
         }
 
-        if (isset($_GET['project_id'])) {
-            $project_id = intval(strip_tags($_GET['project_id']));
-        }
+        $project_id = (isset($_GET['project_id'])) ? intval(strip_tags($_GET['project_id'])) : DEFAULT_PROJECT;
 
-        if (isset($_GET['condition'])) {
-            $filter_string = trim(strip_tags($_GET['condition']));
-        }
+        $filter_string = (isset($_GET['condition'])) ? trim(strip_tags($_GET['condition'])) : DEFAULT_FILTER;
 
-        if (isset($_GET['show_completed'])) {
-            $show_completed_tasks = intval(trim(strip_tags($_GET['show_completed'])));
-        }
+        $show_completed_tasks = (isset($_GET['show_completed']))  ? intval(trim(strip_tags($_GET['show_completed']))) : '';
 
         $is_ok = ($project_id) ? get_project_existance($connection, intval(get_auth_user_property('id')), $project_id) : true;
 

@@ -66,7 +66,11 @@
                                     </td>
 
                                     <td class="task__file">
-                                        <?php if (!empty(get_pure_data($task, 'file'))): ?>
+                                        <?php if (empty(get_pure_data($task, 'file'))): ?>
+                                            <span></span>
+                                        <?php elseif (!fileExists($_SERVER['DOCUMENT_ROOT'] . '/' . $path . get_pure_data($task, 'file'))): ?>
+                                            <span>Файл утрачен</span>
+                                        <?php else: ?>
                                             <a class="download-link"
                                                href="<?= $path . get_pure_data($task, 'file'); ?>">
                                                 <?= get_pure_filename(get_pure_data($task, 'file')); ?>
