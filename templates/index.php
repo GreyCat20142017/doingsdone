@@ -23,7 +23,7 @@
 
                 <a class="button button--transparent button--plus content__side-button"
                    href="form-project.php">Добавить проект</a>
-                <a class="button content__side-button" href="notify.php" style="margin-top: 20px;">Оповещения</a>
+                <a class="button content__side-button" href="notify.php" style="margin-top: 20px;" title="Рассылка оповещений по">Оповещения</a>
             </section>
 
             <main class="content__main">
@@ -59,14 +59,19 @@
                                             <input class="checkbox__input visually-hidden task__checkbox"
                                                    type="checkbox" id="<?= get_pure_data($task, 'id'); ?>"
                                                    value="<?= get_pure_data($task, 'id'); ?>" <?= get_checked_attribute(get_pure_data($task, 'status')); ?>>
-                                            <span class="checkbox__text"> <?= get_pure_data($task, 'name'); ?></span>
+                                            <span class="checkbox__text">
+                                                <?= get_pure_data($task, 'name'); ?>
+                                            </span>
                                         </label>
                                     </td>
 
                                     <td class="task__file">
-                                        <a class="download-link" href="<?= $path . get_pure_data($task, 'file'); ?>">
-                                            <?= get_pure_data($task, 'file'); ?>
-                                        </a>
+                                        <?php if (!empty(get_pure_data($task, 'file'))): ?>
+                                            <a class="download-link"
+                                               href="<?= $path . get_pure_data($task, 'file'); ?>">
+                                                <?= get_pure_filename(get_pure_data($task, 'file')); ?>
+                                            </a>
+                                        <?php endif; ?>
                                     </td>
 
                                     <td class="task__date"> <?= get_pure_data($task, 'expiration_date'); ?></td>

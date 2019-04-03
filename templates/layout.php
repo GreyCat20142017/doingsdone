@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../css/flatpickr.min.css">
 </head>
 
-<body>
+<body <?= get_body_classname(isset($need_background) ? $need_background && !$is_auth :  false); ?>>
 <h1 class="visually-hidden"><?= $title; ?></h1>
 
 <?= $page_content; ?>

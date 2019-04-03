@@ -50,3 +50,9 @@
     define('DEFAULT_PROJECT', null);
     define('DEFAULT_SHOW_COMPLETED', 1);
 
+    define('CUSTOM_FILE_PROPERTY', 'Previous filename');
+
+    define('UI_START', 'UI');
+    define('TRANCATED_COUNT', mb_strlen(uniqid(UI_START, true)) + 1);
+
+

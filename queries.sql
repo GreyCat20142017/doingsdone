@@ -12,7 +12,9 @@ INSERT INTO users (name, email, user_password, registration_date)
 VALUES ('Василий Пупкин', 'vasya@mail.ru', '$2y$10$0GYFabnO4kWUhOhvSaOQGOsT3zHGyQBsSuRcgbtlUIV19u84TEEgW',
         DATE_ADD(NOW(), INTERVAL -2 MONTH)),
        ('Василиса Пупкина', 'vasilisaPupkina@mail.ru', '$2y$10$0GYFabnO4kWUhOhvSaOQGOsT3zHGyQBsSuRcgbtlUIV19u84TEEgW',
-        DATE_ADD(NOW(), INTERVAL -3 WEEK));
+        DATE_ADD(NOW(), INTERVAL -3 WEEK)),
+       ('Кукушкин К.К', 'qq@qq.qq', '$2y$10$0pkXRScT4SJY7zUNzExa9uamBERCt4dvqezPNS69MNVsjpjBI7Un.',
+        DATE_ADD(NOW(), INTERVAL -1 MONTH));
 
 
 INSERT INTO projects (user_id, name)

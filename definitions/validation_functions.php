@@ -179,7 +179,8 @@
         foreach ($file_fields as $field_name => $field) {
             $tmp_name = $files[$field_name]['tmp_name'];
             if (!empty($tmp_name) && is_uploaded_file($tmp_name)) {
-                $path = uniqid('', true) . '.' . pathinfo($files[$field_name]['name'], PATHINFO_EXTENSION);
+                $path = UI_START . uniqid('', true) . '_' .
+                    pathinfo($files[$field_name]['name'], PATHINFO_FILENAME) . '.' . pathinfo($files[$field_name]['name'], PATHINFO_EXTENSION);
                 if (check_and_repair_path($file_path)) {
                     move_uploaded_file($tmp_name, $file_path . $path);
                     $data[$field_name] = $path;

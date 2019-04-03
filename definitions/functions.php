@@ -238,3 +238,31 @@
     function get_active_project_style ($current_project, $project_id) {
         return (intval($current_project) === intval($project_id)) ? ' style = "color: #6e45e2;" ' : '';
     }
+
+    /**
+     * Функция возвращает атрибут класса для гостевой страницы
+     * @param $need_background
+     * @return string
+     *
+     */
+    function get_body_classname ($need_background) {
+        return get_classname(($need_background) ?  'body-background' : '');
+    }
+
+    /**
+     * Функция возвращает "чистое" читабельное имя файла без уникального идентификатора, либо изначальное имя файла
+     * @param $name
+     * @return bool|string
+     */
+    function get_pure_filename ($name) {
+        return substr($name, 0, mb_strlen(UI_START)) === UI_START ? substr($name, TRANCATED_COUNT) : $name;
+    }
+
+    /**
+     * Функция с просторов интернета, проверяющая, существует ли файл.
+     * @param $filePath
+     * @return bool
+     */
+    function fileExists ($filePath) {
+        return is_file($filePath) && file_exists($filePath);
+    }

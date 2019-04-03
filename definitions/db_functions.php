@@ -90,7 +90,9 @@
         $search_condition = empty($search_string) ? '' : ' AND  MATCH(name) AGAINST("' . $search_string . '" IN BOOLEAN MODE)';
         $sql = 'SELECT id, name , file, expiration_date, status, 
                       GREATEST(0, TIMESTAMPDIFF(SECOND, NOW(), expiration_date))  AS time_left FROM tasks 
-                      WHERE user_id = ' . mysqli_real_escape_string($connection, $user_id) . $show_condition . $project_condition . $search_condition . $filter_condition . ';';
+                      WHERE user_id = ' . mysqli_real_escape_string($connection, $user_id) .
+            $show_condition . $project_condition . $search_condition . $filter_condition .
+            ' ORDER BY id DESC;';
         $data = get_data_from_db($connection, $sql, 'Невозможно получить данные о задачах');
         return (!$data || was_error($data)) ? [] : $data;
     }

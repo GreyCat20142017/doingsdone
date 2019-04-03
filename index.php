@@ -115,6 +115,7 @@
             'page_content' => $page_content,
             'title' => 'Дела в порядке',
             'is_auth' => is_auth_user(),
+            'need_background' => !is_auth_user(),
             'user_name' => get_auth_user_property('name')
         ]);
 
